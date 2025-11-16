@@ -1,0 +1,4 @@
+FROM registry.redhat.io/rhel10/rhel-bootc:10.1
+RUN dnf -y install tmux mkpasswd
+RUN pass=$(mkpasswd --method=SHA-512 --rounds=4096 redhat) && useradd -m -G wheel bootc-user -p $pass
+RUN echo "%wheel        ALL=(ALL)       NOPASSWD: ALL" > /etc/sudoers.d/wheel-sudo
