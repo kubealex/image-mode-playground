@@ -6,5 +6,4 @@ RUN dnf -y install httpd && \
     systemctl enable httpd && \
     mv /var/www /usr/share/www && \
     sed -ie 's,/var/www,/usr/share/www,' /etc/httpd/conf/httpd.conf
-COPY files/index.html /usr/share/www/html/index.html
 EXPOSE 80
