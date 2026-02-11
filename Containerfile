@@ -7,4 +7,7 @@ RUN echo "%wheel        ALL=(ALL)       NOPASSWD: ALL" > /etc/sudoers.d/wheel-su
 RUN mv /var/www /usr/share/www && \
     sed -ie 's,/var/www,/usr/share/www,' /etc/httpd/conf/httpd.conf && \
     systemctl enable httpd
+
+# ADD A NEW HOMEPAGE TO THE SERVER
+COPY index.html /usr/share/www/
 EXPOSE 80
