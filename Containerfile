@@ -9,5 +9,5 @@ RUN mv /var/www /usr/share/www && \
     systemctl enable httpd
 
 # ADD A NEW HOMEPAGE TO THE SERVER
-COPY index.html /usr/share/www/
+COPY index.html /usr/share/www/html/
 EXPOSE 80
