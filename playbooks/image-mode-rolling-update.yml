@@ -1,0 +1,15 @@
+---
+- name: "[Image Mode] Rolling updates"
+  hosts: httpd-servers
+  tasks:
+    - name: Fetch bootc updates
+      community.general.bootc_manage:
+        state: latest
+
+    - name: Reboot system
+      ansible.builtin.reboot:
+
+    - name: Test httpd server
+      ansible.builtin.uri:
+        url: "{{ inventory_hostname }}"
+      delegate_to: localhost
