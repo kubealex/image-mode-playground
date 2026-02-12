@@ -1,4 +1,4 @@
-FROM registry.redhat.io/rhel9/rhel-bootc:9.6
+FROM registry.redhat.io/rhel10/rhel-bootc:10.1
 RUN dnf -y install tmux mkpasswd httpd cloud-init && dnf -y clean all
 
 RUN pass=$(mkpasswd --method=SHA-512 --rounds=4096 redhat) && useradd -m -G wheel bootc-user -p $pass
@@ -9,5 +9,5 @@ RUN mv /var/www /usr/share/www && \
     systemctl enable httpd
 
 # ADD A NEW HOMEPAGE TO THE SERVER
-COPY index.html /usr/share/www/html/
+# COPY index.html /usr/share/www/html/
 EXPOSE 80
