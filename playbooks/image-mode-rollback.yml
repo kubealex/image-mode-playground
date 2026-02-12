@@ -6,7 +6,7 @@
     - name: Rollback system to previous version
       become: true
       ansible.builtin.shell:
-        cmd: bootc upgrade --soft-reboot=required --apply
+        cmd: bootc rollback
       notify: Reboot system
 
     - name: Reboot system if needed
