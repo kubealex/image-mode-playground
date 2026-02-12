@@ -1,15 +1,29 @@
 ---
-- name: "[Image Mode] Rolling updates"
+- name: "[Image Mode] Check updates and reboot hosts"
   hosts: httpd-servers
+  serial: 1
   tasks:
     - name: Fetch bootc updates
+      when: not soft_reboot
+      become: true
       community.general.bootc_manage:
         state: latest
+      notify: Reboot system
 
-    - name: Reboot system
-      ansible.builtin.reboot:
+    - name: Upgrade bootc system with soft-reboot
+      ansible.builtin.shell:
+        cmd: bootc upgrade --soft-reboot=required --apply
+
+    - name: Reboot system if needed
+      ansible.builtin.meta: flush_handlers
 
     - name: Test httpd server
       ansible.builtin.uri:
-        url: "{{ inventory_hostname }}"
+        url: "http://{{ inventory_hostname }}"
       delegate_to: localhost
+
+  handlers:
+    - name: Reboot system
+      when: _bootc_output.changed
+      become: true
+      ansible.builtin.reboot:
