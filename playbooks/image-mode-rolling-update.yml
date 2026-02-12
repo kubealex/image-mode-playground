@@ -2,6 +2,8 @@
 - name: "[Image Mode] Check updates and reboot hosts"
   hosts: httpd-servers
   serial: 1
+  vars:
+    soft_reboot: false
   tasks:
     - name: Fetch bootc updates
       when: not soft_reboot
