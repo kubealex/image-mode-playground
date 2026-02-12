@@ -1,0 +1,24 @@
+---
+- name: "[Image Mode] Rollback and reboot hosts"
+  hosts: httpd-servers
+  serial: 1
+  tasks:
+    - name: Rollback system to previous version
+      become: true
+      ansible.builtin.shell:
+        cmd: bootc upgrade --soft-reboot=required --apply
+      notify: Reboot system
+
+    - name: Reboot system if needed
+      ansible.builtin.meta: flush_handlers
+
+    - name: Test httpd server
+      ansible.builtin.uri:
+        url: "http://{{ inventory_hostname }}"
+      delegate_to: localhost
+
+  handlers:
+    - name: Reboot system
+      when: _bootc_output.changed
+      become: true
+      ansible.builtin.reboot:
