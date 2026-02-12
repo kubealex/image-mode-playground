@@ -6,13 +6,15 @@
     soft_reboot: false
   tasks:
     - name: Fetch bootc updates
-      when: not soft_reboot
+      when: soft_reboot == 'false'
       become: true
       community.general.bootc_manage:
         state: latest
       notify: Reboot system
 
     - name: Upgrade bootc system with soft-reboot
+      when: soft_reboot == 'true'
+      become: true
       ansible.builtin.shell:
         cmd: bootc upgrade --soft-reboot=required --apply
 
