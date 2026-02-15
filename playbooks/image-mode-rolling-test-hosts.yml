@@ -1,0 +1,13 @@
+---
+- name: "[Image Mode] Check system status and version"
+  hosts: httpd-servers
+  serial: 1
+  tasks:
+    - name: Print hostname
+      ansible.builtin.debug:
+        msg: "Host: {{ inventory_hostname }} is fully functional"
+
+    - name: Print image version
+      become: true
+      ansible.builtin.shell:
+        cmd: bootc status
