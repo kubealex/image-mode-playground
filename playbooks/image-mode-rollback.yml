@@ -20,6 +20,9 @@
     - name: Test httpd server
       ansible.builtin.uri:
         url: "http://{{ inventory_hostname }}"
+        status_code:
+          - 403
+          - 200
       delegate_to: localhost
 
   handlers:

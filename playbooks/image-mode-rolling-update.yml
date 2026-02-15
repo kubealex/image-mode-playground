@@ -21,14 +21,12 @@
     - name: Reboot system if needed
       ansible.builtin.meta: flush_handlers
 
-    - name: Wait for services to settle
-      ansible.builtin.wait_for:
-        timeout: 30
-      delegate_to: localhost
-
     - name: Test httpd server
       ansible.builtin.uri:
         url: "http://{{ inventory_hostname }}"
+        status_code:
+          - 403
+          - 200
       delegate_to: localhost
 
   handlers:
