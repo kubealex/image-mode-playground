@@ -16,16 +16,33 @@
       when: soft_reboot == 'true'
       become: true
       block:
-        - name: Run update with soft-reboot
-          ansible.builtin.shell:
-            cmd: bootc upgrade --soft-reboot=required --apply
-          async: 1
-          poll: 0
+        - name: Apply bootc update
+          command: bootc upgrade --soft-reboot=required --apply
+          register: bootc_result
+          ignore_unreachable: true
+          failed_when: >
+            bootc_result is defined and
+            bootc_result.rc is defined and
+            bootc_result.rc != 0
+          changed_when: >
+            bootc_result is defined and
+            bootc_result.stdout is defined and
+            "No update available." not in bootc_result.stdout
 
-        - name: Wait for the system to become operational again
-          ansible.builtin.wait_for_connection:
+        - name: Mark changed if reboot caused SSH drop
+          set_fact:
+            reboot_triggered: true
+          when: bootc_result is not defined or
+                bootc_result.unreachable is defined
+          changed_when: true
+
+      always:
+
+        - name: Wait for system to come back
+          wait_for_connection:
             delay: 10
-            timeout: 360
+            timeout: 300
+
 
     - name: Reboot system if needed
       ansible.builtin.meta: flush_handlers
