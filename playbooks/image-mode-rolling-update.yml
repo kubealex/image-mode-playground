@@ -15,8 +15,17 @@
     - name: Upgrade bootc system with soft-reboot
       when: soft_reboot == 'true'
       become: true
-      ansible.builtin.shell:
-        cmd: bootc upgrade --soft-reboot=required --apply
+      block:
+        - name: Run update with soft-reboot
+          ansible.builtin.shell:
+            cmd: bootc upgrade --soft-reboot=required --apply
+          async: 1
+          poll: 0
+
+        - name: Wait for the system to become operational again
+          ansible.builtin.wait_for_connection:
+            delay: 10
+            timeout: 360
 
     - name: Reboot system if needed
       ansible.builtin.meta: flush_handlers
